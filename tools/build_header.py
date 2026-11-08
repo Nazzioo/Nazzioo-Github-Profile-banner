@@ -3,7 +3,8 @@
 Pixel-art header for the Nazzioo GitHub profile.
 
 Draws a 240x80 pixel scene at dusk (sakura tree, Mount Fuji, a torii in the
-lake, a stone lantern, "Welcome to my design world :))") and writes it as an
+lake, a stone lantern, "Welcome to my weird world of design & code") and
+writes it as an
 animated SVG: falling petals, twinkling stars and water sparkles. Everything is plain rects/paths, so GitHub renders it crisp at any width.
 
     python3 tools/build_header.py
@@ -409,6 +410,8 @@ FONT = {
     "T": ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],
     "W": ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "##.##", "#...#"],
     "Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
+    "F": ["#####", "#....", "#....", "####.", "#....", "#....", "#...."],
+    "&": [".##..", "#..#.", "#.#..", ".#...", "#.#.#", "#..#.", ".##.#"],
     "'": ["#", "#", ".", ".", ".", ".", "."],
     ":": [".", ".", "#", ".", ".", "#", "."],
     ")": ["#..", ".#.", "..#", "..#", "..#", ".#.", "#.."],
@@ -444,13 +447,17 @@ def text(s, x0, y0, scale, rows, shadow, gap=1):
 TXL = 98
 BIG_ROWS = ["#fff8ef", "#fff8ef", "#fff1f2", "#ffe4ee", "#ffd6e6", "#ffc3da", "#ffc3da"]
 SMALL_ROWS = ["#ffb3cf"] * 7
+WEIRD_ROWS = ["#ffe08a"] * 7
 SHADOW = [(1, 1, "#24123f"), (2, 2, "#170b2c")]
 
 
 def title():
-    text("WELCOME TO", TXL, 9, 1, SMALL_ROWS, [(1, 1, "#24123f")], gap=2)
-    text("MY DESIGN", TXL, 20, 2, BIG_ROWS, SHADOW)
-    text("WORLD :))", TXL, 38, 2, BIG_ROWS, SHADOW)
+    small = [(1, 1, "#24123f")]
+    text("WELCOME TO MY", TXL, 5, 1, SMALL_ROWS, small, gap=2)
+    end = text("WEIRD", TXL, 15, 1, WEIRD_ROWS, small, gap=2)
+    text(" WORLD OF", end + 2, 15, 1, SMALL_ROWS, small, gap=2)
+    text("DESIGN", TXL, 25, 2, BIG_ROWS, SHADOW)
+    text("& CODE", TXL, 43, 2, BIG_ROWS, SHADOW)
 
 
 # ---------------------------------------------------------------- corners
@@ -466,7 +473,7 @@ def rect(x, y, w, h, c, extra=""):
 
 
 def twinkles():
-    spots = [(112, 4), (147, 7), (189, 3), (230, 11), (168, 16), (131, 15), (214, 22), (98, 1)]
+    spots = [(101, 1), (139, 2), (176, 1), (196, 8), (230, 11), (214, 22), (226, 3), (180, 30)]
     out = []
     for i, (x, y) in enumerate(spots):
         delay = -rng.random() * 4
@@ -563,7 +570,7 @@ def to_svg(glow):
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W * 4}" height="{H * 4}" '
         'shape-rendering="crispEdges" role="img" aria-labelledby="t">'
-        "<title id=\"t\">Welcome to my design world: pixel-art sakura tree, Mount Fuji and a torii at dusk</title>"
+        "<title id=\"t\">Welcome to my weird world of design &amp; code: pixel-art sakura tree, Mount Fuji and a torii at dusk</title>"
         f"<style>{STYLE.strip()}</style>"
         f"<g>{paths}</g>{twinkles()}{sparkles()}{glow_g}{petals()}</svg>\n"
     )
