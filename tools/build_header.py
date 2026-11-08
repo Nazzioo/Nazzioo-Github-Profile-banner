@@ -3,9 +3,8 @@
 Pixel-art header for the Nazzioo GitHub profile.
 
 Draws a 240x80 pixel scene at dusk (sakura tree, Mount Fuji, a torii in the
-lake, a stone lantern, "Welcome to a designer's world") and writes it as an
-animated SVG: falling petals, twinkling stars, water sparkles and a blinking
-cursor. Everything is plain rects/paths, so GitHub renders it crisp at any width.
+lake, a stone lantern, "Welcome to my design world :))") and writes it as an
+animated SVG: falling petals, twinkling stars and water sparkles. Everything is plain rects/paths, so GitHub renders it crisp at any width.
 
     python3 tools/build_header.py
 """
@@ -67,7 +66,7 @@ def stars():
 
 
 # ---------------------------------------------------------------- sun
-SX, SY, SR = 224, 44, 11
+SX, SY, SR = 228, 40, 10
 SUN = ["#fff2cf", "#ffd59c", "#ffab88"]
 
 
@@ -84,7 +83,7 @@ def sun():
 
 
 # ---------------------------------------------------------------- fuji
-FX, FY = 197, 33
+FX, FY = 205, 33
 fuji_mask = set()
 
 
@@ -166,7 +165,7 @@ def water():
 
 
 # ---------------------------------------------------------------- torii
-TX, TY = 176, 48  # top-left of the torii sprite
+TX, TY = 194, 48  # top-left of the torii sprite
 TORII = [
     "K.....................K",
     "KKKKKKKKKKKKKKKKKKKKKKK",
@@ -409,7 +408,10 @@ FONT = {
     "S": [".####", "#....", "#....", ".###.", "....#", "....#", "####."],
     "T": ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],
     "W": ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "##.##", "#...#"],
+    "Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
     "'": ["#", "#", ".", ".", ".", ".", "."],
+    ":": [".", ".", "#", ".", ".", "#", "."],
+    ")": ["#..", ".#.", "..#", "..#", "..#", ".#.", "#.."],
     " ": ["...", "...", "...", "...", "...", "...", "..."],
 }
 
@@ -447,9 +449,8 @@ SHADOW = [(1, 1, "#24123f"), (2, 2, "#170b2c")]
 
 def title():
     text("WELCOME TO", TXL, 9, 1, SMALL_ROWS, [(1, 1, "#24123f")], gap=2)
-    text("A DESIGNER'S", TXL, 20, 2, BIG_ROWS, SHADOW)
-    end = text("WORLD", TXL, 38, 2, BIG_ROWS, SHADOW)
-    return end + 3, 38
+    text("MY DESIGN", TXL, 20, 2, BIG_ROWS, SHADOW)
+    text("WORLD :))", TXL, 38, 2, BIG_ROWS, SHADOW)
 
 
 # ---------------------------------------------------------------- corners
@@ -519,8 +520,6 @@ STYLE = """
 @keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
 .sp{animation:sp 2.6s steps(1) infinite}
 @keyframes sp{0%,55%{opacity:0}60%,80%{opacity:1}85%,100%{opacity:0}}
-.cur{animation:cur 1.1s steps(1) infinite}
-@keyframes cur{0%{opacity:1}50%{opacity:0}}
 .glow{animation:glow 3.2s ease-in-out infinite}
 @keyframes glow{0%,100%{opacity:.55}45%{opacity:1}70%{opacity:.75}}
 .pa,.pb,.pc{animation-timing-function:linear;animation-iteration-count:infinite}
@@ -537,7 +536,7 @@ STYLE = """
 """
 
 
-def to_svg(cursor, glow):
+def to_svg(glow):
     by_color = {}
     for y in range(H):
         x = 0
@@ -552,9 +551,6 @@ def to_svg(cursor, glow):
             by_color.setdefault(c, []).append(f"M{x0} {y}h{x - x0}v1h-{x - x0}z")
     paths = "".join(f'<path fill="{c}" d="{"".join(d)}"/>' for c, d in by_color.items())
 
-    cx, cy = cursor
-    cur = ('<g class="cur">' + rect(cx + 1, cy + 1, 5, 14, "#24123f")
-           + rect(cx, cy, 5, 14, "#ffb3cf") + "</g>")
     gx, gy = glow
     glow_px = []
     for y in range(gy - 3, gy + 4):
@@ -567,9 +563,9 @@ def to_svg(cursor, glow):
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W * 4}" height="{H * 4}" '
         'shape-rendering="crispEdges" role="img" aria-labelledby="t">'
-        "<title id=\"t\">Welcome to a designer's world: pixel-art sakura tree, Mount Fuji and a torii at dusk</title>"
+        "<title id=\"t\">Welcome to my design world: pixel-art sakura tree, Mount Fuji and a torii at dusk</title>"
         f"<style>{STYLE.strip()}</style>"
-        f"<g>{paths}</g>{twinkles()}{sparkles()}{glow_g}{cur}{petals()}</svg>\n"
+        f"<g>{paths}</g>{twinkles()}{sparkles()}{glow_g}{petals()}</svg>\n"
     )
 
 
@@ -585,10 +581,10 @@ def main():
     glow = lantern()
     trunk()
     canopy()
-    cursor = title()
+    title()
     corners()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(to_svg(cursor, glow))
+    OUT.write_text(to_svg(glow))
     print(f"wrote {OUT} ({OUT.stat().st_size / 1024:.1f} KB)")
 
 
